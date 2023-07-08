@@ -30,7 +30,7 @@ watch(
 );
 
 const showToast = (e) => {
-  toast.error("Thẻ " + "[ " + e + " ]" + " của bạn đã hết hạn", {
+  toast.info("Thẻ " + "[ " + e + " ]" + " của bạn đã hết hạn", {
     autoClose: 3000,
     position: "top-center",
   });
@@ -63,7 +63,30 @@ const showToastDelete = (e) => {
     }
   );
 };
-
+const showToastDone = (e) => {
+  toast.success(
+    "Chúc mừng bạn đã hoàn thành thẻ " +
+      "[ " +
+      e.replace(/<[^>]+>/g, "") +
+      " ]",
+    {
+      autoClose: 3000,
+      position: "top-center",
+    }
+  );
+};
+const showToastAddSuccess = () => {
+  toast.success("Thêm thẻ thành công", {
+    autoClose: 3000,
+    position: "top-center",
+  });
+};
+const showToastAddFault = () => {
+  toast.error("Bạn chưa điền đủ thông tin", {
+    autoClose: 3000,
+    position: "top-center",
+  });
+};
 onMounted(() => {
   name.value = localStorage.getItem("name") || "";
   todos.value = JSON.parse(localStorage.getItem("todos")) || [];
@@ -169,7 +192,15 @@ onMounted(() => {
           </label>
         </div>
 
-        <input type="submit" value="Add todo" />
+        <input
+          type="submit"
+          value="Add todo"
+          @click="
+            input_content && input_deadline && input_category
+              ? showToastAddSuccess()
+              : showToastAddFault()
+          "
+        />
       </form>
     </section>
 
@@ -182,7 +213,11 @@ onMounted(() => {
           :class="`todo-item ${todo.done && 'done'}`"
         >
           <label>
-            <input type="checkbox" v-model="todo.done" />
+            <input
+              type="checkbox"
+              @click="!todo.done && showToastDone(todo.content)"
+              v-model="todo.done"
+            />
 
             <span
               :class="`bubble ${
