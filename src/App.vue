@@ -30,7 +30,7 @@ watch(
 );
 
 const showToast = (e) => {
-  toast.error("Thẻ " + "'" + e + "'" + " của bạn đã hết hạn", {
+  toast.error("Thẻ " + "[ " + e + " ]" + " của bạn đã hết hạn", {
     autoClose: 3000,
     position: "top-center",
   });
@@ -50,8 +50,18 @@ const addTodo = () => {
     exprired: false,
   });
 };
+
 const removeTodo = (todo) => {
   todos.value = todos.value.filter((t) => t !== todo);
+};
+const showToastDelete = (e) => {
+  toast.error(
+    "Bạn đã xoá thẻ " + "[ " + e.replace(/<[^>]+>/g, "") + " ]" + " thành công",
+    {
+      autoClose: 3000,
+      position: "top-center",
+    }
+  );
 };
 
 onMounted(() => {
@@ -164,7 +174,7 @@ onMounted(() => {
     </section>
 
     <section class="todo-list">
-      <h3>{{ $t("todolist") }}</h3>
+      <h3 v-if="todos.length > 0">{{ $t("todolist") }}</h3>
       <div class="list" id="todo-list">
         <div
           v-for="todo in todos_asc"
@@ -195,7 +205,15 @@ onMounted(() => {
           </div>
 
           <div class="actions">
-            <button class="delete" @click="removeTodo(todo)">Delete</button>
+            <button
+              class="delete"
+              @click="
+                removeTodo(todo);
+                showToastDelete(todo.content);
+              "
+            >
+              Delete
+            </button>
           </div>
         </div>
       </div>
