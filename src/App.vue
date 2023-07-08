@@ -1,10 +1,9 @@
 <script setup>
 import Editor from "@tinymce/tinymce-vue";
 import { ref, onMounted, computed, watch } from "vue";
-import { toast } from "vue3-toastify";
-import en from "./en.js";
-import vi from "./vi.js";
 import moment from "moment";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 const todos = ref([]);
 const name = ref("");
@@ -30,6 +29,13 @@ watch(
   }
 );
 
+const showToast = (e) => {
+  toast.error("Thẻ " + "'" + e + "'" + " của bạn đã hết hạn", {
+    autoClose: 3000,
+    position: "top-center",
+  });
+};
+
 const addTodo = () => {
   if (input_content.value.trim() === "" || input_category.value === null) {
     return;
@@ -47,6 +53,7 @@ const addTodo = () => {
 const removeTodo = (todo) => {
   todos.value = todos.value.filter((t) => t !== todo);
 };
+
 onMounted(() => {
   name.value = localStorage.getItem("name") || "";
   todos.value = JSON.parse(localStorage.getItem("todos")) || [];
@@ -62,7 +69,8 @@ onMounted(() => {
         todos.value = todos.value.map((todo) =>
           todo.content === item.content ? { ...item, exprired: true } : todo
         );
-        alert(item.content, "da het han");
+        const a = item.content.replace(/<[^>]+>/g, "");
+        showToast(a);
       }
     });
   }, 5000);
@@ -71,7 +79,7 @@ onMounted(() => {
 
 <template>
   <main class="app">
-    <select v-model="$i18n.locale">
+    <select v-model="$i18n.locale" class="lang">
       <option
         v-for="locale in $i18n.availableLocales"
         :key="`locale-${locale}`"
@@ -83,16 +91,16 @@ onMounted(() => {
 
     <section class="greeting">
       <h2 class="title">
-        What's up,
+        {{ $t("hello") }}
         <input type="text" id="name" placeholder="Name here" v-model="name" />
       </h2>
     </section>
 
     <section class="create-todo">
-      <h3>CREATE A TODO</h3>
+      <h3>{{ $t("create_a_todo") }}</h3>
 
       <form id="new-todo-form" @submit.prevent="addTodo">
-        <h4>What's on your todo list?</h4>
+        <h4>{{ $t("what_on_your_todo") }}</h4>
         <editor
           name="content"
           id="content"
@@ -112,15 +120,19 @@ onMounted(() => {
            bullist numlist outdent indent | removeformat | help',
           }"
         />
-        <input
-          type="datetime-local"
-          name="deadline"
-          id="deadline"
-          placeholder="e.g. make a video"
-          v-model="input_deadline"
-        />
+        <div class="deadline_dt">
+          {{ $t("deadline") }}
+          <input
+            class="input_deadline"
+            type="datetime-local"
+            name="deadline"
+            id="deadline"
+            placeholder="e.g. make a video"
+            v-model="input_deadline"
+          />
+        </div>
 
-        <h4>Pick a category</h4>
+        <h4>{{ $t("category") }}</h4>
         <div class="options">
           <label>
             <input
@@ -131,7 +143,7 @@ onMounted(() => {
               v-model="input_category"
             />
             <span class="bubble business"></span>
-            <div>Business</div>
+            <div>{{ $t("business") }}</div>
           </label>
 
           <label>
@@ -143,7 +155,7 @@ onMounted(() => {
               v-model="input_category"
             />
             <span class="bubble personal"></span>
-            <div>Personal</div>
+            <div>{{ $t("personal") }}</div>
           </label>
         </div>
 
@@ -152,7 +164,7 @@ onMounted(() => {
     </section>
 
     <section class="todo-list">
-      <h3>TODO LIST</h3>
+      <h3>{{ $t("todolist") }}</h3>
       <div class="list" id="todo-list">
         <div
           v-for="todo in todos_asc"
@@ -172,8 +184,14 @@ onMounted(() => {
           <div class="todo-content">
             <span type="text" v-html="todo.content"> </span>
           </div>
-          <div class="deadline">
-            Deadline: {{ moment(todo.deadline).format("DD/MM/YYYY, HH:mm") }}
+
+          <div
+            :class="`deadline ${
+              todo.done == false && todo.exprired == true && 'red'
+            }`"
+          >
+            {{ $t("deadline") }}
+            {{ moment(todo.deadline).format("DD/MM/YYYY, HH:mm") }}
           </div>
 
           <div class="actions">

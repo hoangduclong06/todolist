@@ -233,3 +233,28 @@ input:checked~.bubble::after {
     margin-right: 3rem;
     font-size: 0.9rem;
 }
+
+.deadline_dt {
+    font-weight: 700;
+    color: var(--dark);
+    font-size: 1rem;
+    margin: 1rem 0rem;
+}
+
+.input_deadline {
+    font-size: 1rem;
+}
+
+.lang {
+    position: absolute;
+    right: 2rem;
+    top: 2rem;
+    width: 6rem;
+    height: 1.5rem;
+    font-weight: 500;
+    border-radius: 0.7rem;
+}
+
+.red {
+    color: var(--danger);
+}
