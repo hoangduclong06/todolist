@@ -248,7 +248,7 @@ input:checked~.bubble::after {
 .lang {
     position: absolute;
     right: 2rem;
-    top: 2rem;
+    top: 0.5rem;
     width: 6rem;
     height: 1.5rem;
     font-weight: 500;
